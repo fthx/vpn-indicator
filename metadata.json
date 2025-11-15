@@ -1,0 +1,16 @@
+{
+  "description": "Display current VPN name in panel.",
+  "name": "VPN Indicator",
+  "shell-version": [
+    "46",
+    "47",
+    "48",
+    "49"
+  ],
+  "url": "https://github.com/fthx/vpn-indicator",
+  "uuid": "vpn-indicator@fthx",
+  "version": 999,
+  "donations": {
+    "paypal": "fthx75"
+  }
+}

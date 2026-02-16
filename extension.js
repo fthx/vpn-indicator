@@ -27,7 +27,7 @@ const VPNIndicator = GObject.registerClass(
             this._setLabel();
             this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._setLabel(), this);
 
-            this.connectObject('button-release-event', () => Util.trySpawnCommandLine('gnome-control-center network'), this);
+            this.connect('button-release-event', () => Util.trySpawnCommandLine('gnome-control-center network'));
         }
 
         _setLabel() {

@@ -45,7 +45,7 @@ const VPNIndicator = GObject.registerClass(
         }
 
         destroy() {
-            this._quickSettings?.disconnectObject(this);
+            this._quickSettings?._indicators?.disconnectObject(this);
 
             super.destroy();
         }

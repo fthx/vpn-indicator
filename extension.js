@@ -1,6 +1,6 @@
 //    VPN Indicator
 //    GNOME Shell extension
-//    @fthx 2025
+//    @fthx 2026
 
 
 import Clutter from 'gi://Clutter';
@@ -12,44 +12,47 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as Util from 'resource:///org/gnome/shell/misc/util.js';
 
 
-const VPNIndicator = GObject.registerClass(
-    class VPNIndicator extends PanelMenu.Button {
-        _init() {
-            super._init();
+class VPNIndicator extends PanelMenu.Button {
+    static {
+        GObject.registerClass(this);
+    }
 
-            this._quickSettings = Main.panel.statusArea.quickSettings;
+    constructor() {
+        super();
 
-            this._label = new St.Label({ y_align: Clutter.ActorAlign.CENTER });
-            this.add_child(this._label);
+        this._quickSettings = Main.panel.statusArea.quickSettings;
 
-            Main.panel.addToStatusArea('VPNIndicatorButton', this);
+        this._label = new St.Label({ y_align: Clutter.ActorAlign.CENTER });
+        this.add_child(this._label);
 
-            this._setLabel();
-            this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._setLabel(), this);
+        Main.panel.addToStatusArea('VPNIndicatorButton', this);
 
-            if (this._clickGesture)
-                this.remove_action(this._clickGesture);
-            this._clickGesture = new Clutter.ClickGesture();
-            this._clickGesture.connect('recognize', () => Util.trySpawnCommandLine('gnome-control-center network'));
-            this.add_action(this._clickGesture);
-        }
+        this._setLabel();
+        this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._setLabel(), this);
 
-        _setLabel() {
-            if (this._toggle)
-                return;
+        if (this._clickGesture)
+            this.remove_action(this._clickGesture);
+        this._clickGesture = new Clutter.ClickGesture();
+        this._clickGesture.connect('recognize', () => Util.trySpawnCommandLine('gnome-control-center network'));
+        this.add_action(this._clickGesture);
+    }
 
-            this._toggle = this._quickSettings?._network?._vpnToggle;
+    _setLabel() {
+        if (this._toggle)
+            return;
 
-            this._toggle?.bind_property('subtitle', this._label, 'text', GObject.BindingFlags.SYNC_CREATE);
-            this._toggle?.bind_property('checked', this, 'visible', GObject.BindingFlags.SYNC_CREATE);
-        }
+        this._toggle = this._quickSettings?._network?._vpnToggle;
 
-        destroy() {
-            this._quickSettings?._indicators?.disconnectObject(this);
+        this._toggle?.bind_property('subtitle', this._label, 'text', GObject.BindingFlags.SYNC_CREATE);
+        this._toggle?.bind_property('checked', this, 'visible', GObject.BindingFlags.SYNC_CREATE);
+    }
 
-            super.destroy();
-        }
-    });
+    destroy() {
+        this._quickSettings?._indicators?.disconnectObject(this);
+
+        super.destroy();
+    }
+}
 
 export default class VPNIndicatorExtension {
     enable() {

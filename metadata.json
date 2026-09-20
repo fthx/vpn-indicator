@@ -3,7 +3,8 @@
   "name": "VPN Indicator",
   "shell-version": [
     "49",
-    "50"
+    "50",
+    "51"
   ],
   "url": "https://github.com/fthx/vpn-indicator",
   "uuid": "vpn-indicator@fthx",

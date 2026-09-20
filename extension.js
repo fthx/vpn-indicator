@@ -44,7 +44,10 @@ class VPNIndicator extends PanelMenu.Button {
         this._toggle = this._quickSettings?._network?._vpnToggle;
 
         this._toggle?.bind_property('subtitle', this._label, 'text', GObject.BindingFlags.SYNC_CREATE);
-        this._toggle?.bind_property('checked', this, 'visible', GObject.BindingFlags.SYNC_CREATE);
+        this._toggle?.bind_property_full('icon-name', this, 'visible',
+            GObject.BindingFlags.SYNC_CREATE,
+            (_binding, source) => [true, source === 'network-vpn-symbolic'],
+            null);
     }
 
     destroy() {

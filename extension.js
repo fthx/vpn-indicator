@@ -29,7 +29,7 @@ class VPNIndicator extends PanelMenu.Button {
 
         Main.panel.addToStatusArea('VPNIndicatorButton', this);
 
-        this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._bindVpnToggle(), this);
+        this._quickSettings?._indicators?.connectObject('child-added', () => this._bindVpnToggle(), this);
         this._bindVpnToggle();
 
         this.remove_action(this._clickGesture);

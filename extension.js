@@ -25,29 +25,36 @@ class VPNIndicator extends PanelMenu.Button {
         this._label = new St.Label({ y_align: Clutter.ActorAlign.CENTER });
         this.add_child(this._label);
 
+        this.visible = false;
+
         Main.panel.addToStatusArea('VPNIndicatorButton', this);
 
-        this._setLabel();
-        this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._setLabel(), this);
+        this._quickSettings?._indicators?.connectObject('notify::allocation', () => this._bindVpnToggle(), this);
+        this._bindVpnToggle();
 
-        if (this._clickGesture)
-            this.remove_action(this._clickGesture);
+        this.remove_action(this._clickGesture);
         this._clickGesture = new Clutter.ClickGesture();
         this._clickGesture.connect('recognize', () => Util.trySpawnCommandLine('gnome-control-center network'));
         this.add_action(this._clickGesture);
     }
 
-    _setLabel() {
-        if (this._toggle)
+    _bindVpnToggle() {
+        const toggle = this._quickSettings?._network?._vpnToggle;
+        if (!toggle)
             return;
 
-        this._toggle = this._quickSettings?._network?._vpnToggle;
+        this._quickSettings._indicators.disconnectObject(this);
 
-        this._toggle?.bind_property('subtitle', this._label, 'text', GObject.BindingFlags.SYNC_CREATE);
-        this._toggle?.bind_property_full('icon-name', this, 'visible',
-            GObject.BindingFlags.SYNC_CREATE,
-            (_binding, source) => [true, source === 'network-vpn-symbolic'],
-            null);
+        toggle.bind_property('subtitle', this._label, 'text', GObject.BindingFlags.SYNC_CREATE);
+        toggle.connectObject(
+            'notify::checked', () => this._syncVisibility(toggle),
+            'notify::icon-name', () => this._syncVisibility(toggle),
+            this);
+        this._syncVisibility(toggle);
+    }
+
+    _syncVisibility(toggle) {
+        this.visible = toggle.checked && toggle.iconName === 'network-vpn-symbolic';
     }
 
     destroy() {
